@@ -4,8 +4,6 @@
 > reproducible evaluation harness, and a reliability layer that handles the
 > failure modes real RAG systems hit.
 
-🔗 Live demo · 📹 Demo video · 📊 Scorecard below
-
 ## What it does
 
 docmind ingests a folder of Markdown/text documents, embeds them into pgvector,
@@ -23,9 +21,9 @@ Query (every question):    embed → vector search (top-k) → cited context →
 Providers are OpenAI-compatible: **OpenRouter** for embeddings, **Groq** for
 generation and the LLM-judge. One SDK, only the base URL and key change.
 
-## Results / Evaluation   ★
+## Results / Evaluation
 
-Run `npm run eval` after ingesting the sample corpus. Fill in your real numbers:
+Measured on the sample corpus with `npm run eval` (reproduce with the same command):
 
 | Metric | Score | Notes |
 |---|---|---|
@@ -44,7 +42,7 @@ under threshold. Grow the corpus or lower `chunkSize` to make these metrics mean
 
 Reproduce: `npm run eval`.
 
-## Reliability — failure modes handled   ★
+## Reliability — failure modes handled
 
 | Failure mode | Behaviour |
 |---|---|
@@ -53,7 +51,7 @@ Reproduce: `npm run eval`.
 | Oversized retrieval | Context-budget cap before the model call |
 | Empty / malformed output | Validated; safe fallback |
 
-## Engineering decisions & tradeoffs   ★
+## Engineering decisions & tradeoffs
 
 - **pgvector over Pinecone:** single DB, ACID, no extra infra at this scale.
 - **HNSW over IVFFlat:** better recall for < 1M rows; one-time build cost.
