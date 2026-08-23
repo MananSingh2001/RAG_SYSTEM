@@ -1,12 +1,19 @@
 import { config } from './config.js';
 import { retrieve } from './retrieve.js';
 import { generate } from './generate.js';
+import { classifyIntent, CHIT_CHAT } from './intent.js';
 
 // the single entry point the server calls.
 // returns a discriminated result so the caller can branch cleanly.
 export async function answerQuestion(question) {
   if (!question || !question.trim()) {
     return { status: 'bad_request', message: 'Question is empty.' };
+  }
+
+  // 0. small talk: handle greetings/meta conversationally, no retrieval needed
+  const intent = classifyIntent(question);
+  if (intent !== 'question') {
+    return { status: 'chit_chat', answer: CHIT_CHAT[intent] ?? CHIT_CHAT.meta };
   }
 
   // 1. retrieve (embeddings.js already retries transient failures)

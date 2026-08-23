@@ -260,6 +260,9 @@ body {
 .badge--err {
   color: var(--err);
 }
+.badge--info {
+  color: var(--accent);
+}
 
 .answer {
   margin: 0;

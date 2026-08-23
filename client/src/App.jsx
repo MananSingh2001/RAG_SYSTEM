@@ -5,6 +5,7 @@ const API = import.meta.env.VITE_API_URL || '';
 // map API status -> badge label + tone class
 const TONE = {
   ok: { label: 'Answer', cls: 'badge--ok' },
+  chit_chat: { label: 'sourcebound', cls: 'badge--info' },
   no_coverage: { label: 'No coverage', cls: 'badge--warn' },
   bad_request: { label: 'Invalid request', cls: 'badge--err' },
   retrieval_error: { label: 'Service error', cls: 'badge--err' },

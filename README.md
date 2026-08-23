@@ -13,7 +13,9 @@
 sourcebound ingests a folder of Markdown/text documents, embeds them into pgvector,
 and answers questions **only** from what it retrieves — every answer carries
 inline citations back to the source file and chunk. When retrieval finds nothing
-above the similarity threshold, it refuses honestly instead of guessing.
+above the similarity threshold, it refuses honestly instead of guessing. A small
+intent layer handles greetings and "what can you do" conversationally, so casual
+input gets a friendly reply while substantive questions go through grounded RAG.
 
 ## Architecture
 
@@ -138,6 +140,19 @@ curl -X POST localhost:8080/ask \
 npm run eval           # scorecard against eval/golden.json
 npm run experiment     # re-ingests + re-evals at 256 vs 512 and prints the delta
 ```
+
+### 6b. Scale the corpus (optional)
+
+```bash
+npm run corpus:build -- 200   # fetch ~200 real Wikipedia articles → ./corpus-large
+npm run ingest -- ./corpus-large
+```
+
+Pulls real public text (Wikipedia REST API, no key) to demonstrate scale. Kept
+separate from `./corpus` (which the eval targets). Stays well under Supabase's
+free 500MB cap — ~200 articles ≈ 1–2k chunks ≈ ~15MB. Millions of rows would
+need a paid database and an embedding budget; this shows the pipeline scaling
+within the free tier.
 
 ### 7. Frontend (optional)
 
