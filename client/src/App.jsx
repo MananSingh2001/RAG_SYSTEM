@@ -55,8 +55,8 @@ export default function App() {
               <h1 className="title">sourcebound</h1>
             </div>
             <p className="subtitle">
-              Answers strictly from the document corpus — with inline citations,
-              a coverage guard, and a reliability layer.
+              Answers grounded in your documents — every claim cited, and honest
+              when the corpus doesn&rsquo;t cover the question.
             </p>
           </header>
 
