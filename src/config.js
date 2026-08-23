@@ -22,7 +22,7 @@ export const config = {
 
   // retrieval
   topK: 5, // how many chunks to feed the model
-  matchThreshold: 0.35, // cosine floor tuned for text-embedding-3-small (was 0.72, too high → filtered everything)
+  matchThreshold: 0.2, // tuned via `npm run sweep`: best hit-rate@5 with tight context (0.35 starved retrieval to <1 chunk/query)
 
   // generation
   maxContextChunks: 8, // hard cap so a big retrieval can't blow the window

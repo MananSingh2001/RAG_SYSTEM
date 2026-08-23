@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { config } from './config.js';
+import { withBackoff } from './retry.js';
 
 // same OpenAI SDK, pointed at Groq
 const groq = new OpenAI({
@@ -27,18 +28,22 @@ function buildContext(chunks) {
 export async function generate(question, chunks) {
   const context = buildContext(chunks);
 
-  const res = await groq.chat.completions.create({
-    model: config.genModel,
-    max_tokens: 1024,
-    temperature: 0.2, // low = stick to the sources
-    messages: [
-      { role: 'system', content: SYSTEM },
-      {
-        role: 'user',
-        content: `Sources:\n\n${context}\n\nQuestion: ${question}`,
-      },
-    ],
-  });
+  const res = await withBackoff(
+    () =>
+      groq.chat.completions.create({
+        model: config.genModel,
+        max_tokens: 1024,
+        temperature: 0.2, // low = stick to the sources
+        messages: [
+          { role: 'system', content: SYSTEM },
+          {
+            role: 'user',
+            content: `Sources:\n\n${context}\n\nQuestion: ${question}`,
+          },
+        ],
+      }),
+    { label: 'generate' }
+  );
 
   const answer = (res.choices?.[0]?.message?.content ?? '').trim();
   const sources = chunks.map((c, i) => ({

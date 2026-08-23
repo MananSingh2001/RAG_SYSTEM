@@ -4,6 +4,10 @@
 > reproducible evaluation harness, and a reliability layer that handles the
 > failure modes real RAG systems hit.
 
+**Live demo:** _(add your Vercel URL here after deploying)_ · **CI:** syntax check on every push; full eval on demand.
+
+<!-- Add a UI screenshot or GIF here once deployed, e.g. ![sourcebound UI](docs/screenshot.png) -->
+
 ## What it does
 
 sourcebound ingests a folder of Markdown/text documents, embeds them into pgvector,
@@ -23,29 +27,46 @@ generation and the LLM-judge. One SDK, only the base URL and key change.
 
 ## Results / Evaluation
 
-Measured on the sample corpus with `npm run eval` (reproduce with the same command):
+Corpus: **14 documents → 18 chunks** (chunkSize 512), evaluated against a
+**37-pair golden set** spanning every document. Reproduce with `npm run eval`.
 
 | Metric | Score | Notes |
 |---|---|---|
-| Retrieval hit-rate@5 | 73.3% | over 15 hand-written Q&A pairs (expand to 30–50) |
-| MRR | 0.700 | |
-| Keyword recall | 73.3% | deterministic; expected terms present in the answer |
-| Answer faithfulness (LLM-judge) | 5.00 / 5 | separate Groq instance as judge |
-| Answer relevance (LLM-judge) | 4.92 / 5 | |
-| Chunk-size experiment | `npm run experiment` | wipes + re-ingests + re-evals at each size, prints a 256-vs-512 delta |
+| Retrieval hit-rate@5 | 40.5% | expected source in the top-5 retrieved chunks |
+| MRR | 0.378 | rank of the first correct source |
+| Keyword recall | 51.4% | expected terms present in the answer (deterministic) |
+| Answer faithfulness (LLM-judge) | 4.78 / 5 | answer supported by the retrieved context |
+| Answer relevance (LLM-judge) | 4.00 / 5 | answer addresses the question |
 
 Run config: embeddings `openai/text-embedding-3-small` (1536-dim, via OpenRouter),
-generation + judge `openai/gpt-oss-20b` (via Groq), `matchThreshold` 0.35, `topK` 5.
-The sample corpus is small (4 docs → 4 chunks), so hit-rate/MRR here mostly reflect
-whether each query clears the similarity floor; the ~27% miss is queries falling just
-under threshold. Grow the corpus or lower `chunkSize` to make these metrics meaningful.
+generation + judge `openai/gpt-oss-20b` (via Groq), `matchThreshold` 0.20, `topK` 5.
 
-Measured: `npm run experiment` yields identical retrieval at chunkSize 256 vs 512 on
-this corpus — each doc is a single chunk at both sizes, so chunk size has no effect
-until documents are large enough to split. The harness is in place to catch the delta
-once the corpus grows.
+### Tuning the threshold by measurement
 
-Reproduce: `npm run eval`.
+`npm run sweep` scores retrieval (embeddings only, no LLM cost) across thresholds.
+The default was starving retrieval — at 0.35 it returned under one chunk per query:
+
+| matchThreshold | hit-rate@5 | MRR | avg chunks returned |
+|---|---|---|---|
+| 0.15 | 40.5% | 0.378 | 3.6 |
+| **0.20** | **40.5%** | **0.378** | **2.8** |
+| 0.25 | 37.8% | 0.351 | 2.2 |
+| 0.30 | 35.1% | 0.338 | 1.2 |
+| 0.35 | 29.7% | 0.284 | 0.8 |
+| 0.40 | 21.6% | 0.216 | 0.3 |
+
+0.20 gives the best hit-rate with the tightest context, so it is the configured
+default. Generation is strong (faithfulness 4.78) — the bottleneck is **retrieval**:
+hit-rate plateaus near 40% because the corpus is topically dense (14 documents on
+adjacent RAG concepts), so the correct chunk competes with near-identical ones that
+pure vector similarity can't always rank first. This is the measured case for the
+reranking / hybrid-search work listed below.
+
+The **chunk-size experiment** (`npm run experiment`) re-ingests and re-evals at 256
+vs 512 and prints the delta.
+
+> An earlier 4-doc corpus scored 73.3% hit-rate — but with one chunk per document
+> that wasn't testing retrieval. The expanded corpus makes these numbers real.
 
 ## Reliability — failure modes handled
 
@@ -66,10 +87,13 @@ Reproduce: `npm run eval`.
 
 ## What I'd improve for production
 
-- Hybrid search (keyword + vector) for exact-term queries
-- Re-ranking pass before context assembly
-- Run eval in CI on every commit
-- Streaming responses and per-request cost/latency logging
+- **Re-ranking pass** before context assembly — the measured next lever: the
+  threshold sweep shows retrieval plateauing near 40% hit-rate on a topically
+  dense corpus, exactly where a cross-encoder reranker helps most.
+- **Hybrid search** (keyword + vector) for exact-term queries the embedding misses.
+- **Eval in CI** — already scaffolded in `.github/workflows/ci.yml` (syntax on every
+  push; full LLM eval on demand to respect free-tier quota).
+- Streaming responses and per-request cost/latency logging.
 
 ## Run it locally
 

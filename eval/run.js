@@ -8,6 +8,11 @@ import { hitRate, mrr, keywordRecall } from './metrics.js';
 const golden = JSON.parse(fs.readFileSync('./eval/golden.json', 'utf8'));
 const avg = (xs) => xs.reduce((a, b) => a + b, 0) / (xs.length || 1);
 
+// Optional pause between questions to stay under free-tier token/min limits.
+// e.g. DOCMIND_EVAL_DELAY_MS=4000 npm run eval
+const DELAY = Number(process.env.DOCMIND_EVAL_DELAY_MS) || 0;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 async function main() {
   const results = [];
   const faith = [];
@@ -30,6 +35,7 @@ async function main() {
 
     results.push({ ...item, retrieved, answer });
     process.stdout.write('.');
+    if (DELAY) await sleep(DELAY);
   }
 
   console.log('\n\n===== sourcebound eval scorecard =====');

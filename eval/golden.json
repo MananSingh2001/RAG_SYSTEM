@@ -88,5 +88,137 @@
     "question": "What dimensionality do the stored embeddings have?",
     "expected_source": "schema-notes.md",
     "expected_answer_contains": ["1536"]
+  },
+  {
+    "id": "q016",
+    "question": "When do cosine similarity and dot product rank results identically?",
+    "expected_source": "embeddings-deep-dive.md",
+    "expected_answer_contains": ["normalized"]
+  },
+  {
+    "id": "q017",
+    "question": "What does Matryoshka Representation Learning let a single embedding model emit?",
+    "expected_source": "embeddings-deep-dive.md",
+    "expected_answer_contains": ["prefix"]
+  },
+  {
+    "id": "q018",
+    "question": "What does the ef_construction parameter control when building an HNSW index?",
+    "expected_source": "vector-indexes.md",
+    "expected_answer_contains": ["neighbor"]
+  },
+  {
+    "id": "q019",
+    "question": "Why must an IVFFlat index be built after some vectors already exist?",
+    "expected_source": "vector-indexes.md",
+    "expected_answer_contains": ["cluster"]
+  },
+  {
+    "id": "q020",
+    "question": "What merge method does hybrid search commonly use to combine result lists?",
+    "expected_source": "retrieval-strategies.md",
+    "expected_answer_contains": ["reciprocal"]
+  },
+  {
+    "id": "q021",
+    "question": "What kind of query does dense retrieval tend to miss?",
+    "expected_source": "retrieval-strategies.md",
+    "expected_answer_contains": ["exact"]
+  },
+  {
+    "id": "q022",
+    "question": "How does a cross-encoder score relevance differently from a bi-encoder?",
+    "expected_source": "reranking.md",
+    "expected_answer_contains": ["together"]
+  },
+  {
+    "id": "q023",
+    "question": "What does Maximal Marginal Relevance balance against relevance to the query?",
+    "expected_source": "reranking.md",
+    "expected_answer_contains": ["novelty"]
+  },
+  {
+    "id": "q024",
+    "question": "What does chunk overlap prevent when a fact straddles a window boundary?",
+    "expected_source": "chunking-strategies.md",
+    "expected_answer_contains": ["boundary"]
+  },
+  {
+    "id": "q025",
+    "question": "What does semantic chunking detect to decide where to place boundaries?",
+    "expected_source": "chunking-strategies.md",
+    "expected_answer_contains": ["topic"]
+  },
+  {
+    "id": "q026",
+    "question": "What is the 'lost in the middle' effect in context assembly?",
+    "expected_source": "prompting-and-grounding.md",
+    "expected_answer_contains": ["middle"]
+  },
+  {
+    "id": "q027",
+    "question": "What should a grounded system do when retrieval returns nothing above the threshold?",
+    "expected_source": "prompting-and-grounding.md",
+    "expected_answer_contains": ["refuse"]
+  },
+  {
+    "id": "q028",
+    "question": "What does the faithfulness metric measure in a generated answer?",
+    "expected_source": "evaluation-metrics.md",
+    "expected_answer_contains": ["support"]
+  },
+  {
+    "id": "q029",
+    "question": "Why is a separate model instance used as the LLM-as-judge?",
+    "expected_source": "evaluation-metrics.md",
+    "expected_answer_contains": ["own"]
+  },
+  {
+    "id": "q030",
+    "question": "How many golden pairs give scores stable enough to defend?",
+    "expected_source": "evaluation-metrics.md",
+    "expected_answer_contains": ["thirty"]
+  },
+  {
+    "id": "q031",
+    "question": "What backoff schedule should a client use on transient API failures?",
+    "expected_source": "llmops-and-observability.md",
+    "expected_answer_contains": ["exponential"]
+  },
+  {
+    "id": "q032",
+    "question": "Why do budget-conscious teams run only retrieval metrics on every commit?",
+    "expected_source": "llmops-and-observability.md",
+    "expected_answer_contains": ["quota"]
+  },
+  {
+    "id": "q033",
+    "question": "What happens to the metrics when the similarity threshold is set too high?",
+    "expected_source": "failure-modes.md",
+    "expected_answer_contains": ["zero"]
+  },
+  {
+    "id": "q034",
+    "question": "What prevents an oversized retrieval from exceeding the context window?",
+    "expected_source": "failure-modes.md",
+    "expected_answer_contains": ["truncat"]
+  },
+  {
+    "id": "q035",
+    "question": "Where must a database service-role key run?",
+    "expected_source": "data-privacy-and-security.md",
+    "expected_answer_contains": ["server"]
+  },
+  {
+    "id": "q036",
+    "question": "What should you do with a credential that was committed or shared?",
+    "expected_source": "data-privacy-and-security.md",
+    "expected_answer_contains": ["rotat"]
+  },
+  {
+    "id": "q037",
+    "question": "Why is a provider's free tier unsuitable for confidential data?",
+    "expected_source": "data-privacy-and-security.md",
+    "expected_answer_contains": ["regulated"]
   }
 ]
