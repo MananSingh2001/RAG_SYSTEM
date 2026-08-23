@@ -1,0 +1,92 @@
+[
+  {
+    "id": "q001",
+    "question": "What similarity metric does the retriever use?",
+    "expected_source": "schema-notes.md",
+    "expected_answer_contains": ["cosine"]
+  },
+  {
+    "id": "q002",
+    "question": "What happens when no chunk clears the threshold?",
+    "expected_source": "reliability-notes.md",
+    "expected_answer_contains": ["no", "coverage"]
+  },
+  {
+    "id": "q003",
+    "question": "Why is HNSW chosen over IVFFlat for the index?",
+    "expected_source": "schema-notes.md",
+    "expected_answer_contains": ["recall"]
+  },
+  {
+    "id": "q004",
+    "question": "How does match_chunks compute similarity from cosine distance?",
+    "expected_source": "schema-notes.md",
+    "expected_answer_contains": ["1", "distance"]
+  },
+  {
+    "id": "q005",
+    "question": "What retry strategy does the embeddings module use on transient errors?",
+    "expected_source": "reliability-notes.md",
+    "expected_answer_contains": ["backoff"]
+  },
+  {
+    "id": "q006",
+    "question": "What is the purpose of the context-budget cap?",
+    "expected_source": "reliability-notes.md",
+    "expected_answer_contains": ["context", "window"]
+  },
+  {
+    "id": "q007",
+    "question": "What temperature is used for generation and why?",
+    "expected_source": "generation-notes.md",
+    "expected_answer_contains": ["0.2"]
+  },
+  {
+    "id": "q008",
+    "question": "How is the model instructed to cite its sources?",
+    "expected_source": "generation-notes.md",
+    "expected_answer_contains": ["cite"]
+  },
+  {
+    "id": "q009",
+    "question": "Why can the codebase use a single SDK for two providers?",
+    "expected_source": "generation-notes.md",
+    "expected_answer_contains": ["openai"]
+  },
+  {
+    "id": "q010",
+    "question": "Why does the chunker use overlap between windows?",
+    "expected_source": "chunking-notes.md",
+    "expected_answer_contains": ["sentence"]
+  },
+  {
+    "id": "q011",
+    "question": "What is the default chunk size and overlap?",
+    "expected_source": "chunking-notes.md",
+    "expected_answer_contains": ["512", "64"]
+  },
+  {
+    "id": "q012",
+    "question": "Why must query embeddings use the same model as ingestion?",
+    "expected_source": "chunking-notes.md",
+    "expected_answer_contains": ["similarity"]
+  },
+  {
+    "id": "q013",
+    "question": "What provenance is stored on each chunk?",
+    "expected_source": "schema-notes.md",
+    "expected_answer_contains": ["source_name", "chunk_index"]
+  },
+  {
+    "id": "q014",
+    "question": "What happens if the model returns an empty or malformed answer?",
+    "expected_source": "reliability-notes.md",
+    "expected_answer_contains": ["fallback"]
+  },
+  {
+    "id": "q015",
+    "question": "What dimensionality do the stored embeddings have?",
+    "expected_source": "schema-notes.md",
+    "expected_answer_contains": ["1536"]
+  }
+]
