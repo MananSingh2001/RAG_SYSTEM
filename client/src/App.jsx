@@ -6,6 +6,7 @@ const API = import.meta.env.VITE_API_URL || '';
 const TONE = {
   ok: { label: 'Answer', cls: 'badge--ok' },
   chit_chat: { label: 'sourcebound', cls: 'badge--info' },
+  general: { label: 'General', cls: 'badge--warn' },
   no_coverage: { label: 'No coverage', cls: 'badge--warn' },
   bad_request: { label: 'Invalid request', cls: 'badge--err' },
   retrieval_error: { label: 'Service error', cls: 'badge--err' },
@@ -100,6 +101,8 @@ export default function App() {
               </span>
 
               <p className="answer">{result.answer || result.message}</p>
+
+              {result.note && <p className="note">{result.note}</p>}
 
               {result.status === 'ok' && result.sources?.length > 0 && (
                 <div className="sources">

@@ -270,6 +270,12 @@ body {
   font-size: 16px;
   color: #f2f3fb;
 }
+.note {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+}
 
 .sources {
   margin-top: 20px;

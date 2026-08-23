@@ -22,6 +22,7 @@ app.post('/ask', async (req, res) => {
   const codeByStatus = {
     ok: 200,
     chit_chat: 200, // greeting / meta small talk
+    general: 200, // assistant-mode answer (not from corpus)
     no_coverage: 200, // a valid, honest answer
     bad_request: 400,
     retrieval_error: 503,

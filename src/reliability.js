@@ -2,6 +2,32 @@ import { config } from './config.js';
 import { retrieve } from './retrieve.js';
 import { generate } from './generate.js';
 import { classifyIntent, CHIT_CHAT } from './intent.js';
+import { generalAnswer } from './assistant.js';
+
+// assistant-mode fallback: answer from general model knowledge, clearly labelled
+// as NOT from the corpus. Keeps the app helpful without pretending it's grounded.
+async function generalFallback(question) {
+  try {
+    const answer = await generalAnswer(question);
+    if (!answer) {
+      return {
+        status: 'no_coverage',
+        message: "I don't have information on that in the current documents.",
+      };
+    }
+    return {
+      status: 'general',
+      answer,
+      note: 'From general knowledge — not the document corpus, so no citations.',
+    };
+  } catch (err) {
+    return {
+      status: 'generation_error',
+      message: 'The answer service is unavailable right now.',
+      detail: err.message,
+    };
+  }
+}
 
 // the single entry point the server calls.
 // returns a discriminated result so the caller can branch cleanly.
@@ -28,8 +54,11 @@ export async function answerQuestion(question) {
     };
   }
 
-  // 2. coverage guard: if nothing cleared the threshold, refuse honestly
+  // 2. coverage guard: nothing cleared the threshold.
+  //    - grounded mode: refuse honestly.
+  //    - assistant mode: fall back to general knowledge (clearly labelled).
   if (chunks.length === 0) {
+    if (config.assistantMode) return generalFallback(question);
     return {
       status: 'no_coverage',
       message: "I don't have information on that in the current documents.",

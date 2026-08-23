@@ -26,6 +26,12 @@ export const config = {
 
   // generation
   maxContextChunks: 8, // hard cap so a big retrieval can't blow the window
+
+  // assistant mode: when the corpus has no coverage, answer from general model
+  // knowledge (clearly labelled "not from the corpus") instead of refusing, and
+  // handle small talk + minor tasks. Set DOCMIND_ASSISTANT_MODE=false for the
+  // strict grounded-only behaviour. Default: on.
+  assistantMode: (process.env.DOCMIND_ASSISTANT_MODE ?? 'true') !== 'false',
 };
 
 for (const [k, v] of Object.entries(config)) {
