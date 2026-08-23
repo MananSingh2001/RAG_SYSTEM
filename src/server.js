@@ -32,4 +32,4 @@ app.post('/ask', async (req, res) => {
 });
 
 const port = process.env.PORT || 8080;
-app.listen(port, () => console.log(`docmind on :${port}`));
+app.listen(port, () => console.log(`sourcebound on :${port}`));

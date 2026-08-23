@@ -1,4 +1,4 @@
-# docmind — Grounded RAG Assistant with Evaluation
+# sourcebound — Grounded RAG Assistant with Evaluation
 
 > Answers questions strictly from a document corpus, with inline citations, a
 > reproducible evaluation harness, and a reliability layer that handles the
@@ -6,7 +6,7 @@
 
 ## What it does
 
-docmind ingests a folder of Markdown/text documents, embeds them into pgvector,
+sourcebound ingests a folder of Markdown/text documents, embeds them into pgvector,
 and answers questions **only** from what it retrieves — every answer carries
 inline citations back to the source file and chunk. When retrieval finds nothing
 above the similarity threshold, it refuses honestly instead of guessing.
@@ -32,13 +32,18 @@ Measured on the sample corpus with `npm run eval` (reproduce with the same comma
 | Keyword recall | 73.3% | deterministic; expected terms present in the answer |
 | Answer faithfulness (LLM-judge) | 5.00 / 5 | separate Groq instance as judge |
 | Answer relevance (LLM-judge) | 4.92 / 5 | |
-| Chunk-size experiment | 512 vs 256 | re-run eval at each `chunkSize` and record the delta |
+| Chunk-size experiment | `npm run experiment` | wipes + re-ingests + re-evals at each size, prints a 256-vs-512 delta |
 
 Run config: embeddings `openai/text-embedding-3-small` (1536-dim, via OpenRouter),
 generation + judge `openai/gpt-oss-20b` (via Groq), `matchThreshold` 0.35, `topK` 5.
 The sample corpus is small (4 docs → 4 chunks), so hit-rate/MRR here mostly reflect
 whether each query clears the similarity floor; the ~27% miss is queries falling just
 under threshold. Grow the corpus or lower `chunkSize` to make these metrics meaningful.
+
+Measured: `npm run experiment` yields identical retrieval at chunkSize 256 vs 512 on
+this corpus — each doc is a single chunk at both sizes, so chunk size has no effect
+until documents are large enough to split. The harness is in place to catch the delta
+once the corpus grows.
 
 Reproduce: `npm run eval`.
 
@@ -106,7 +111,8 @@ curl -X POST localhost:8080/ask \
 ### 6. Evaluate
 
 ```bash
-npm run eval
+npm run eval           # scorecard against eval/golden.json
+npm run experiment     # re-ingests + re-evals at 256 vs 512 and prints the delta
 ```
 
 ### 7. Frontend (optional)
@@ -120,7 +126,7 @@ npm run dev        # http://localhost:5173, proxies /ask to :8080
 ## Project layout
 
 ```
-docmind/
+sourcebound/
 ├─ sql/schema.sql          pgvector, tables, HNSW index, match_chunks RPC
 ├─ src/
 │  ├─ config.js            env + tunables (chunk size, top-k, thresholds)

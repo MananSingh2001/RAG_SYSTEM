@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { createClient } from '@supabase/supabase-js';
 import { config } from './config.js';
 import { chunkDocument } from './chunk.js';
@@ -7,7 +8,7 @@ import { embedTexts } from './embeddings.js';
 
 const supabase = createClient(config.supabaseUrl, config.supabaseKey);
 
-async function ingestFile(filePath) {
+export async function ingestFile(filePath) {
   const sourceName = path.basename(filePath);
   const raw = fs.readFileSync(filePath, 'utf8');
   const chunks = chunkDocument(raw);
@@ -43,12 +44,8 @@ async function ingestFile(filePath) {
   return rows.length;
 }
 
-async function main() {
-  const dir = process.argv[2];
-  if (!dir) {
-    console.error('usage: npm run ingest -- <folder>');
-    process.exit(1);
-  }
+// ingest every .md/.txt file in a folder; returns { files, chunks }.
+export async function ingestDir(dir) {
   const files = fs
     .readdirSync(dir)
     .filter((f) => /\.(md|txt)$/i.test(f))
@@ -56,10 +53,23 @@ async function main() {
 
   let total = 0;
   for (const f of files) total += await ingestFile(f);
-  console.log(`\nDONE. ${files.length} files, ${total} chunks total.`);
+  return { files: files.length, chunks: total };
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+async function main() {
+  const dir = process.argv[2];
+  if (!dir) {
+    console.error('usage: npm run ingest -- <folder>');
+    process.exit(1);
+  }
+  const { files, chunks } = await ingestDir(dir);
+  console.log(`\nDONE. ${files} files, ${chunks} chunks total.`);
+}
+
+// only run the CLI when invoked directly, not when imported by the experiment.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}

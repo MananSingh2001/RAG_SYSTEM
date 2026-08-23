@@ -1,12 +1,16 @@
 import { config } from './config.js';
 
-// approximate: ~4 chars per token for English.
-const charsPerChunk = config.chunkSize * 4;
-const charsOverlap = config.chunkOverlap * 4;
-
 // split on paragraph boundaries first, then pack into windows so we
-// avoid cutting mid-paragraph where possible.
-export function chunkDocument(text) {
+// avoid cutting mid-paragraph where possible. Sizes are read per-call
+// (defaulting to config) so experiments can vary chunkSize without a restart.
+export function chunkDocument(
+  text,
+  { chunkSize = config.chunkSize, chunkOverlap = config.chunkOverlap } = {}
+) {
+  // approximate: ~4 chars per token for English.
+  const charsPerChunk = chunkSize * 4;
+  const charsOverlap = chunkOverlap * 4;
+
   const paragraphs = text
     .split(/\n\s*\n/)
     .map((s) => s.trim())

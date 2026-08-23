@@ -1,6 +1,6 @@
 # Schema & Retrieval Notes
 
-docmind stores every document in a `documents` table and every chunk in a
+sourcebound stores every document in a `documents` table and every chunk in a
 `chunks` table. Each chunk keeps a foreign key to its parent document, the
 denormalised `source_name`, and its `chunk_index` (position within the
 document) so answers can cite exactly where a passage came from.

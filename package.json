@@ -1,5 +1,5 @@
 {
-  "name": "docmind",
+  "name": "sourcebound",
   "version": "0.1.0",
   "description": "Document-grounded RAG assistant with evaluation and a reliability layer.",
   "type": "module",
@@ -7,7 +7,8 @@
     "ingest": "node src/ingest.js",
     "serve": "node src/server.js",
     "eval": "node eval/run.js",
-    "check": "node --check src/config.js && node --check src/embeddings.js && node --check src/chunk.js && node --check src/ingest.js && node --check src/retrieve.js && node --check src/generate.js && node --check src/reliability.js && node --check src/server.js && node --check eval/metrics.js && node --check eval/judge.js && node --check eval/run.js"
+    "experiment": "node eval/experiment.js",
+    "check": "node --check src/config.js && node --check src/embeddings.js && node --check src/chunk.js && node --check src/ingest.js && node --check src/retrieve.js && node --check src/generate.js && node --check src/reliability.js && node --check src/server.js && node --check eval/metrics.js && node --check eval/judge.js && node --check eval/run.js && node --check eval/experiment.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

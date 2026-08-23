@@ -32,7 +32,7 @@ async function main() {
     process.stdout.write('.');
   }
 
-  console.log('\n\n===== docmind eval scorecard =====');
+  console.log('\n\n===== sourcebound eval scorecard =====');
   console.log(`questions:            ${golden.length}`);
   console.log(
     `retrieval hit-rate@${config.topK}:  ${(hitRate(results) * 100).toFixed(1)}%`

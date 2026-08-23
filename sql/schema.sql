@@ -1,4 +1,4 @@
--- docmind schema — run in the Supabase SQL editor.
+-- sourcebound schema — run in the Supabase SQL editor.
 
 -- 1. enable pgvector (Supabase ships it; this just turns it on)
 create extension if not exists vector;
