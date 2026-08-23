@@ -4,7 +4,7 @@
 > reproducible evaluation harness, and a reliability layer that handles the
 > failure modes real RAG systems hit.
 
-**Live demo:** _(add your Vercel URL here after deploying)_ · **CI:** syntax check on every push; full eval on demand.
+**Live demo:** https://sourcebound-one.vercel.app · **CI:** syntax check on every push; full eval on demand.
 
 <!-- Add a UI screenshot or GIF here once deployed, e.g. ![sourcebound UI](docs/screenshot.png) -->
 
