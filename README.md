@@ -30,45 +30,42 @@ generation and the LLM-judge. One SDK, only the base URL and key change.
 ## Results / Evaluation
 
 Corpus: **14 documents → 18 chunks** (chunkSize 512), evaluated against a
-**37-pair golden set** spanning every document. Reproduce with `npm run eval`.
+**37-pair golden set** spanning every document.
 
-| Metric | Score | Notes |
+### Retrieval — before vs after reranking
+
+Retrieval quality on the clean corpus, measured with `npm run eval:rerank`
+(embeddings + Cohere only, no LLM cost):
+
+| | hit-rate@5 | MRR |
 |---|---|---|
-| Retrieval hit-rate@5 | 40.5% | expected source in the top-5 retrieved chunks |
-| MRR | 0.378 | rank of the first correct source |
-| Keyword recall | 51.4% | expected terms present in the answer (deterministic) |
-| Answer faithfulness (LLM-judge) | 4.78 / 5 | answer supported by the retrieved context |
-| Answer relevance (LLM-judge) | 4.00 / 5 | answer addresses the question |
+| Vector only | 91.9% | 0.731 |
+| **+ Cohere reranker (`rerank-v3.5`)** | **100%** | **0.941** |
+
+The reranker pulls a 20-candidate pool from pgvector and reorders it with a
+cross-encoder, lifting MRR from 0.731 → 0.941 — it fixes the cases where the right
+document was retrieved but ranked 2nd or 3rd under pure vector similarity. Set
+`COHERE_API_KEY` to enable it; absent the key it falls back to vector order with no
+behaviour change. (This is a 37-pair set on a small corpus, so 100% shows the
+reranker cleanly resolves ordering here, not that it holds at arbitrary scale.)
 
 Run config: embeddings `openai/text-embedding-3-small` (1536-dim, via OpenRouter),
-generation + judge `openai/gpt-oss-20b` (via Groq), `matchThreshold` 0.20, `topK` 5.
+generation + judge `openai/gpt-oss-20b` (via Groq), `matchThreshold` 0.20 (tuned
+with `npm run sweep`), `topK` 5, rerank candidate pool 20.
 
-### Tuning the threshold by measurement
+### Generation quality (LLM-as-judge)
 
-`npm run sweep` scores retrieval (embeddings only, no LLM cost) across thresholds.
-The default was starving retrieval — at 0.35 it returned under one chunk per query:
-
-| matchThreshold | hit-rate@5 | MRR | avg chunks returned |
-|---|---|---|---|
-| 0.15 | 40.5% | 0.378 | 3.6 |
-| **0.20** | **40.5%** | **0.378** | **2.8** |
-| 0.25 | 37.8% | 0.351 | 2.2 |
-| 0.30 | 35.1% | 0.338 | 1.2 |
-| 0.35 | 29.7% | 0.284 | 0.8 |
-| 0.40 | 21.6% | 0.216 | 0.3 |
-
-0.20 gives the best hit-rate with the tightest context, so it is the configured
-default. Generation is strong (faithfulness 4.78) — the bottleneck is **retrieval**:
-hit-rate plateaus near 40% because the corpus is topically dense (14 documents on
-adjacent RAG concepts), so the correct chunk competes with near-identical ones that
-pure vector similarity can't always rank first. This is the measured case for the
-reranking / hybrid-search work listed below.
+Faithfulness and answer-relevance are scored by a separate Groq instance over the
+golden set via `npm run eval`. Re-run it to populate these on your setup — a prior
+run scored faithfulness ~4.8/5. (Groq's free tier is capped at 200k tokens/day, so
+a full 37-question judge run may need to wait for the daily reset.)
 
 The **chunk-size experiment** (`npm run experiment`) re-ingests and re-evals at 256
 vs 512 and prints the delta.
 
-> An earlier 4-doc corpus scored 73.3% hit-rate — but with one chunk per document
-> that wasn't testing retrieval. The expanded corpus makes these numbers real.
+> Reproducibility note: `ingest.js` appends, so re-ingesting without first running
+> `truncate chunks, documents;` leaves duplicate chunks that quietly degrade
+> retrieval. All numbers above are on a clean, de-duplicated 18-chunk corpus.
 
 ## Reliability — failure modes handled
 
@@ -89,9 +86,6 @@ vs 512 and prints the delta.
 
 ## What I'd improve for production
 
-- **Re-ranking pass** before context assembly — the measured next lever: the
-  threshold sweep shows retrieval plateauing near 40% hit-rate on a topically
-  dense corpus, exactly where a cross-encoder reranker helps most.
 - **Hybrid search** (keyword + vector) for exact-term queries the embedding misses.
 - **Eval in CI** — already scaffolded in `.github/workflows/ci.yml` (syntax on every
   push; full LLM eval on demand to respect free-tier quota).

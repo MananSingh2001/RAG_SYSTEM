@@ -24,6 +24,15 @@ export const config = {
   topK: 5, // how many chunks to feed the model
   matchThreshold: 0.2, // tuned via `npm run sweep`: best hit-rate@5 with tight context (0.35 starved retrieval to <1 chunk/query)
 
+  // reranking (optional): pull a larger candidate pool from the vector index,
+  // then a cross-encoder reranker reorders it down to topK. Improves ranking on
+  // topically dense corpora. Enabled automatically when COHERE_API_KEY is set;
+  // absent, the system falls back to plain vector order (no behaviour change).
+  candidateCount: 20, // vector candidates fetched before reranking to topK
+  cohereKey: process.env.COHERE_API_KEY ?? '',
+  rerankModel: 'rerank-v3.5', // Cohere Rerank (free trial: no card, 1k calls/mo)
+  rerankEnabled: !!process.env.COHERE_API_KEY,
+
   // generation
   maxContextChunks: 8, // hard cap so a big retrieval can't blow the window
 

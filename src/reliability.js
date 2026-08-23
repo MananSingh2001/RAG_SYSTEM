@@ -3,6 +3,7 @@ import { retrieve } from './retrieve.js';
 import { generate } from './generate.js';
 import { classifyIntent, CHIT_CHAT } from './intent.js';
 import { generalAnswer } from './assistant.js';
+import { rerankChunks } from './rerank.js';
 
 // assistant-mode fallback: answer from general model knowledge, clearly labelled
 // as NOT from the corpus. Keeps the app helpful without pretending it's grounded.
@@ -42,10 +43,12 @@ export async function answerQuestion(question) {
     return { status: 'chit_chat', answer: CHIT_CHAT[intent] ?? CHIT_CHAT.meta };
   }
 
-  // 1. retrieve (embeddings.js already retries transient failures)
+  // 1. retrieve (embeddings.js already retries transient failures).
+  //    When reranking is on, pull a larger candidate pool to rerank from.
   let chunks;
+  const pool = config.rerankEnabled ? config.candidateCount : config.topK;
   try {
-    chunks = await retrieve(question);
+    chunks = await retrieve(question, { topK: pool });
   } catch (err) {
     return {
       status: 'retrieval_error',
@@ -65,8 +68,11 @@ export async function answerQuestion(question) {
     };
   }
 
+  // 2b. rerank the candidate pool down to topK (falls back to vector order)
+  const ranked = await rerankChunks(question, chunks, config.topK);
+
   // 3. context-budget cap
-  const capped = chunks.slice(0, config.maxContextChunks);
+  const capped = ranked.slice(0, config.maxContextChunks);
 
   // 4. generate, then validate output
   try {
