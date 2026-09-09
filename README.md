@@ -250,6 +250,7 @@ npm run dev        # http://localhost:5173, proxies /ask to :8080
 
 ```
 sourcebound/
+├─ .github/workflows/ci.yml  syntax check every push; full eval on demand
 ├─ sql/schema.sql          pgvector, tables, HNSW index, match_chunks RPC
 ├─ src/
 │  ├─ config.js            env + tunables (chunk size, top-k, thresholds)
