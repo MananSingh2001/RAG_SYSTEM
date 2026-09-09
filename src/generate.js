@@ -53,5 +53,12 @@ export async function generate(question, chunks) {
     similarity: Number(c.similarity?.toFixed(3)),
   }));
 
-  return { answer, sources };
+  return {
+    answer,
+    sources,
+    usage: {
+      inputTokens: res.usage?.prompt_tokens ?? 0,
+      outputTokens: res.usage?.completion_tokens ?? 0,
+    },
+  };
 }

@@ -11,12 +11,16 @@
     "sweep": "node eval/retrieval-sweep.js",
     "eval:rerank": "node eval/rerank-eval.js",
     "corpus:build": "node scripts/build-large-corpus.js",
-    "check": "node --check src/config.js && node --check src/embeddings.js && node --check src/chunk.js && node --check src/ingest.js && node --check src/retrieve.js && node --check src/generate.js && node --check src/reliability.js && node --check src/server.js && node --check eval/metrics.js && node --check eval/judge.js && node --check eval/run.js && node --check eval/experiment.js && node --check eval/retrieval-sweep.js && node --check src/intent.js && node --check src/assistant.js && node --check src/rerank.js && node --check eval/rerank-eval.js && node --check scripts/build-large-corpus.js"
+    "corpus:stats": "node scripts/corpus-stats.js",
+    "eval:latency": "node eval/latency-cost-eval.js",
+    "eval:adversarial": "node eval/adversarial-eval.js",
+    "check": "node --check src/config.js && node --check src/embeddings.js && node --check src/chunk.js && node --check src/ingest.js && node --check src/retrieve.js && node --check src/generate.js && node --check src/reliability.js && node --check src/server.js && node --check eval/metrics.js && node --check eval/judge.js && node --check eval/run.js && node --check eval/experiment.js && node --check eval/retrieval-sweep.js && node --check src/intent.js && node --check src/assistant.js && node --check src/rerank.js && node --check eval/rerank-eval.js && node --check scripts/build-large-corpus.js && node --check scripts/corpus-stats.js && node --check eval/instrumentation.js && node --check eval/latency-cost-eval.js && node --check eval/adversarial-eval.js && node --check src/tracing.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "langfuse": "^3.38.20",
     "openai": "^4.104.0"
   },
   "engines": {

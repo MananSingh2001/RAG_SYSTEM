@@ -41,6 +41,13 @@ export const config = {
   // handle small talk + minor tasks. Set DOCMIND_ASSISTANT_MODE=false for the
   // strict grounded-only behaviour. Default: on.
   assistantMode: (process.env.DOCMIND_ASSISTANT_MODE ?? 'true') !== 'false',
+
+  // tracing (optional): enabled automatically when both Langfuse keys are set;
+  // absent them, tracing calls are no-ops (same fallback pattern as reranking).
+  langfusePublicKey: process.env.LANGFUSE_PUBLIC_KEY ?? '',
+  langfuseSecretKey: process.env.LANGFUSE_SECRET_KEY ?? '',
+  langfuseHost: process.env.LANGFUSE_HOST || 'https://cloud.langfuse.com',
+  langfuseEnabled: !!(process.env.LANGFUSE_PUBLIC_KEY && process.env.LANGFUSE_SECRET_KEY),
 };
 
 for (const [k, v] of Object.entries(config)) {

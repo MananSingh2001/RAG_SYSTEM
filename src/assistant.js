@@ -29,5 +29,11 @@ export async function generalAnswer(question) {
       }),
     { label: 'assistant' }
   );
-  return (res.choices?.[0]?.message?.content ?? '').trim();
+  return {
+    answer: (res.choices?.[0]?.message?.content ?? '').trim(),
+    usage: {
+      inputTokens: res.usage?.prompt_tokens ?? 0,
+      outputTokens: res.usage?.completion_tokens ?? 0,
+    },
+  };
 }
