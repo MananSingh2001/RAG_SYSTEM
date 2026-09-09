@@ -55,10 +55,20 @@ with `npm run sweep`), `topK` 5, rerank candidate pool 20.
 
 ### Generation quality (LLM-as-judge)
 
-Faithfulness and answer-relevance are scored by a separate Groq instance over the
-golden set via `npm run eval`. Re-run it to populate these on your setup — a prior
-run scored faithfulness ~4.8/5. (Groq's free tier is capped at 200k tokens/day, so
-a full 37-question judge run may need to wait for the daily reset.)
+Faithfulness and answer-relevance are scored by a separate Groq instance over
+the golden set via `npm run eval`. Latest run (vector-only, no rerank —
+`eval/run.js` doesn't go through the rerank path):
+
+| questions | hit-rate@5 | MRR | keyword recall | faithfulness (judge) | relevance (judge) |
+|---|---|---|---|---|---|
+| 37 | 91.9% | 0.731 | 89.2% | 5.00 / 5 | 5.00 / 5 |
+
+A perfect judge score on a 37-question golden set built from the same corpus
+it's answering from is expected — these questions were written to have clean,
+unambiguous answers in the source text. It's a regression signal (did a
+change break faithfulness), not evidence the system generalizes to harder,
+real-world questions. (Groq's free tier is capped at 200k tokens/day, so a
+full run may need to wait for the daily reset if you've used it recently.)
 
 The **chunk-size experiment** (`npm run experiment`) re-ingests and re-evals at 256
 vs 512 and prints the delta.
